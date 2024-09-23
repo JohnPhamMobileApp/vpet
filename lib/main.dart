@@ -93,6 +93,16 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     }
   }
 
+  // Text Controller
+  final _controller = TextEditingController();
+
+  // Update Pet Name
+  void _updatePetName(){
+    setState(() {
+      petName = _controller.text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,6 +113,17 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Pet Name',
+              ),
+            ),
+            ElevatedButton(
+              onPressed: _updatePetName,
+              child: const Text("Change Pet Name"),
+            ),
             Text(
               'Name: $petName',
               style: TextStyle(fontSize: 20.0),
