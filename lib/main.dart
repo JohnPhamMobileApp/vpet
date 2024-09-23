@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async'; // Import the async package
 
 void main() {
   runApp(MaterialApp(
@@ -15,6 +16,36 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   String petName = "Your Pet";
   int happinessLevel = 50;
   int hungerLevel = 50;
+  Timer? _timer; // Timer instance
+
+  @override
+  void initState() {
+    super.initState();
+    _startHungerTimer(); // Start the timer when the app initializes
+  }
+
+  // Function to start the hunger timer
+  void _startHungerTimer() {
+    _timer = Timer.periodic(Duration(seconds: 30), (timer) {
+      _increaseHunger();
+    });
+  }
+
+  // Function to increase hunger
+  void _increaseHunger() {
+    setState(() {
+      hungerLevel = (hungerLevel + 5).clamp(0, 100);
+      if (hungerLevel >= 100) {
+        happinessLevel = (happinessLevel - 20).clamp(0, 100);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Cancel the timer when disposing
+    super.dispose();
+  }
 
   // Function to determine the color based on happiness level
   Color _getHappinessColor() {
@@ -27,11 +58,21 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     }
   }
 
+  // Function to get mood text and emoji based on happiness level
+  String _getMoodText() {
+    if (happinessLevel > 70) {
+      return '😊 Happy'; // Happy
+    } else if (happinessLevel >= 30) {
+      return '😐 Neutral'; // Neutral
+    } else {
+      return '😢 Unhappy'; // Sad
+    }
+  }
+
   // Function to increase happiness and update hunger when playing with the pet
   void _playWithPet() {
     setState(() {
       happinessLevel = (happinessLevel + 10).clamp(0, 100);
-      _updateHunger();
     });
   }
 
@@ -49,14 +90,6 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
       happinessLevel = (happinessLevel - 20).clamp(0, 100);
     } else {
       happinessLevel = (happinessLevel + 10).clamp(0, 100);
-    }
-  }
-
-  // Increase hunger level slightly when playing with the pet
-  void _updateHunger() {
-    hungerLevel = (hungerLevel + 5).clamp(0, 100);
-    if (hungerLevel >= 100) {
-      happinessLevel = (happinessLevel - 20).clamp(0, 100);
     }
   }
 
@@ -82,6 +115,11 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
                 color: _getHappinessColor(), // Set color dynamically
               ),
             ),
+            SizedBox(height: 8.0),
+            Text(
+              _getMoodText(), // Display mood text with emoji
+              style: TextStyle(fontSize: 24.0),
+            ),
             SizedBox(height: 16.0),
             Text(
               'Hunger Level: $hungerLevel',
@@ -103,5 +141,3 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     );
   }
 }
-
-
