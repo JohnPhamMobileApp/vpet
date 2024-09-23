@@ -1,112 +1,92 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    home: DigitalPetApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class DigitalPetApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Digital Pet App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'My Digital Pet'),
-    );
-  }
+  _DigitalPetAppState createState() => _DigitalPetAppState();
 }
 
-class Pet {
-  int happiness;
-  int hunger;
-  int energy;
+class _DigitalPetAppState extends State<DigitalPetApp> {
+  String petName = "Your Pet";
+  int happinessLevel = 50;
+  int hungerLevel = 50;
 
-  Pet({this.happiness = 100, this.hunger = 100, this.energy = 100});
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  late Pet pet;
-
-  @override
-  void initState() {
-    super.initState();
-    pet = Pet();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    // Update pet status every minute
-    Future.delayed(Duration(minutes: 1), () {
-      setState(() {
-        pet.happiness -= 5;
-        pet.hunger -= 10;
-        pet.energy -= 5;
-      });
-      _startTimer(); // Restart the timer
-    });
-  }
-
-  void _feedPet() {
-    setState(() {
-      pet.hunger = (pet.hunger + 20).clamp(0, 100);
-    });
-  }
-
+  // Function to increase happiness and update hunger when playing with the pet
   void _playWithPet() {
     setState(() {
-      pet.happiness = (pet.happiness + 15).clamp(0, 100);
-      pet.energy = (pet.energy - 10).clamp(0, 100);
+      happinessLevel = (happinessLevel + 10).clamp(0, 100);
+      _updateHunger();
     });
   }
 
-  void _groomPet() {
+  // Function to decrease hunger and update happiness when feeding the pet
+  void _feedPet() {
     setState(() {
-      pet.happiness = (pet.happiness + 10).clamp(0, 100);
-      pet.energy = (pet.energy - 5).clamp(0, 100);
+      hungerLevel = (hungerLevel - 10).clamp(0, 100);
+      _updateHappiness();
     });
   }
 
-  void _trainPet() {
-    setState(() {
-      pet.happiness = (pet.happiness + 5).clamp(0, 100);
-      pet.energy = (pet.energy - 15).clamp(0, 100);
-    });
+  // Update happiness based on hunger level
+  void _updateHappiness() {
+    if (hungerLevel < 30) {
+      happinessLevel = (happinessLevel - 20).clamp(0, 100);
+    } else {
+      happinessLevel = (happinessLevel + 10).clamp(0, 100);
+    }
+  }
+
+  // Increase hunger level slightly when playing with the pet
+  void _updateHunger() {
+    hungerLevel = (hungerLevel + 5).clamp(0, 100);
+    if (hungerLevel >= 100) {
+      happinessLevel = (happinessLevel - 20).clamp(0, 100);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Digital Pet'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Happiness: ${pet.happiness}'),
-            Text('Hunger: ${pet.hunger}'),
-            Text('Energy: ${pet.energy}'),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: _feedPet, child: const Text('Feed')),
-            ElevatedButton(onPressed: _playWithPet, child: const Text('Play')),
-            ElevatedButton(onPressed: _groomPet, child: const Text('Groom')),
-            ElevatedButton(onPressed: _trainPet, child: const Text('Train')),
+            Text(
+              'Name: $petName',
+              style: TextStyle(fontSize: 20.0),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Happiness Level: $happinessLevel',
+              style: TextStyle(fontSize: 20.0),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Hunger Level: $hungerLevel',
+              style: TextStyle(fontSize: 20.0),
+            ),
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: _playWithPet,
+              child: Text('Play with Your Pet'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _feedPet,
+              child: Text('Feed Your Pet'),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
