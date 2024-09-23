@@ -16,6 +16,17 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   int happinessLevel = 50;
   int hungerLevel = 50;
 
+  // Function to determine the color based on happiness level
+  Color _getHappinessColor() {
+    if (happinessLevel > 70) {
+      return Colors.green; // Happy
+    } else if (happinessLevel >= 30) {
+      return Colors.yellow; // Neutral
+    } else {
+      return Colors.red; // Sad
+    }
+  }
+
   // Function to increase happiness and update hunger when playing with the pet
   void _playWithPet() {
     setState(() {
@@ -66,7 +77,10 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
             SizedBox(height: 16.0),
             Text(
               'Happiness Level: $happinessLevel',
-              style: TextStyle(fontSize: 20.0),
+              style: TextStyle(
+                fontSize: 20.0,
+                color: _getHappinessColor(), // Set color dynamically
+              ),
             ),
             SizedBox(height: 16.0),
             Text(
@@ -89,4 +103,5 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     );
   }
 }
+
 
