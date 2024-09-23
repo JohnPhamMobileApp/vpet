@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // Import the async package
+import 'dart:async';
 
 void main() {
   runApp(MaterialApp(
@@ -16,18 +16,22 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   String petName = "Your Pet";
   int happinessLevel = 50;
   int hungerLevel = 50;
-  Timer? _timer; // Timer instance
+  Timer? _hungerTimer;
+  Timer? _winTimer;
+  bool gameOver = false;
+  bool gameWon = false;
 
   @override
   void initState() {
     super.initState();
-    _startHungerTimer(); // Start the timer when the app initializes
+    _startHungerTimer();
   }
 
   // Function to start the hunger timer
   void _startHungerTimer() {
-    _timer = Timer.periodic(Duration(seconds: 30), (timer) {
+    _hungerTimer = Timer.periodic(Duration(seconds: 30), (timer) {
       _increaseHunger();
+      _checkLossCondition();
     });
   }
 
@@ -41,9 +45,36 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
+  // Function to check for win condition
+  void _checkWinCondition() {
+    if (happinessLevel > 80) {
+      if (_winTimer == null) {
+        _winTimer = Timer(Duration(minutes: 1), () {
+          setState(() {
+            gameWon = true;
+          });
+        });
+      }
+    } else {
+      _winTimer?.cancel();
+      _winTimer = null; // Reset win timer
+    }
+  }
+
+  // Function to check for loss condition
+  void _checkLossCondition() {
+    if (hungerLevel >= 100 && happinessLevel <= 10) {
+      setState(() {
+        gameOver = true;
+      });
+      _hungerTimer?.cancel(); // Stop hunger timer on game over
+    }
+  }
+
   @override
   void dispose() {
-    _timer?.cancel(); // Cancel the timer when disposing
+    _hungerTimer?.cancel();
+    _winTimer?.cancel();
     super.dispose();
   }
 
@@ -73,6 +104,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   void _playWithPet() {
     setState(() {
       happinessLevel = (happinessLevel + 10).clamp(0, 100);
+      _checkWinCondition(); // Check win condition after playing
     });
   }
 
@@ -91,6 +123,27 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     } else {
       happinessLevel = (happinessLevel + 10).clamp(0, 100);
     }
+    _checkWinCondition(); // Check win condition after feeding
+  }
+
+  // Text Controller
+  final _controller = TextEditingController();
+
+  // Update Pet Name
+  void _updatePetName() {
+    setState(() {
+      petName = _controller.text;
+    });
+  }
+
+  // Text Controller
+  final _controller = TextEditingController();
+
+  // Update Pet Name
+  void _updatePetName(){
+    setState(() {
+      petName = _controller.text;
+    });
   }
 
   // Text Controller
@@ -105,6 +158,35 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Display Game Over message if the game is lost
+    if (gameOver) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Game Over')),
+        body: Center(
+          child: Text(
+            'Game Over! Your pet is too hungry!',
+            style: TextStyle(fontSize: 24.0, color: Colors.red),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    // Display Win message if the game is won
+    if (gameWon) {
+      return Scaffold(
+        appBar: AppBar(title: Text('You Win!')),
+        body: Center(
+          child: Text(
+            'You Win! Your pet is very happy!',
+            style: TextStyle(fontSize: 24.0, color: Colors.green),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    // Main game interface
     return Scaffold(
       appBar: AppBar(
         title: Text('Digital Pet'),
