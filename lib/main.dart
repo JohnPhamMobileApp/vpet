@@ -8,6 +8,8 @@ void main() {
 }
 
 class DigitalPetApp extends StatefulWidget {
+  const DigitalPetApp({super.key});
+
   @override
   _DigitalPetAppState createState() => _DigitalPetAppState();
 }
@@ -29,7 +31,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
 
   // Function to start the hunger timer
   void _startHungerTimer() {
-    _hungerTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+    _hungerTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       _increaseHunger();
       _checkLossCondition();
     });
@@ -48,13 +50,11 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
   // Function to check for win condition
   void _checkWinCondition() {
     if (happinessLevel > 80) {
-      if (_winTimer == null) {
-        _winTimer = Timer(Duration(minutes: 1), () {
-          setState(() {
-            gameWon = true;
-          });
+      _winTimer ??= Timer(Duration(minutes: 1), () {
+        setState(() {
+          gameWon = true;
         });
-      }
+      });
     } else {
       _winTimer?.cancel();
       _winTimer = null; // Reset win timer
@@ -85,7 +85,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     } else if (happinessLevel >= 30) {
       return Colors.yellow; // Neutral
     } else {
-      return Colors.red; // Sad
+      return Colors.blue; // Sad
     }
   }
 
@@ -136,33 +136,13 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     });
   }
 
-  // Text Controller
-  final _controller = TextEditingController();
-
-  // Update Pet Name
-  void _updatePetName(){
-    setState(() {
-      petName = _controller.text;
-    });
-  }
-
-  // Text Controller
-  final _controller = TextEditingController();
-
-  // Update Pet Name
-  void _updatePetName(){
-    setState(() {
-      petName = _controller.text;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // Display Game Over message if the game is lost
     if (gameOver) {
       return Scaffold(
-        appBar: AppBar(title: Text('Game Over')),
-        body: Center(
+        appBar: AppBar(title: const Text('Game Over')),
+        body: const Center(
           child: Text(
             'Game Over! Your pet is too hungry!',
             style: TextStyle(fontSize: 24.0, color: Colors.red),
@@ -175,8 +155,8 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     // Display Win message if the game is won
     if (gameWon) {
       return Scaffold(
-        appBar: AppBar(title: Text('You Win!')),
-        body: Center(
+        appBar: AppBar(title: const Text('You Win!')),
+        body: const Center(
           child: Text(
             'You Win! Your pet is very happy!',
             style: TextStyle(fontSize: 24.0, color: Colors.green),
@@ -189,7 +169,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
     // Main game interface
     return Scaffold(
       appBar: AppBar(
-        title: Text('Digital Pet'),
+        title: const Text('Digital Pet'),
       ),
       body: Center(
         child: Column(
@@ -197,7 +177,7 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
           children: <Widget>[
             TextField(
               controller: _controller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Pet Name',
               ),
@@ -208,9 +188,9 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
             ),
             Text(
               'Name: $petName',
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               'Happiness Level: $happinessLevel',
               style: TextStyle(
@@ -218,25 +198,25 @@ class _DigitalPetAppState extends State<DigitalPetApp> {
                 color: _getHappinessColor(), // Set color dynamically
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
               _getMoodText(), // Display mood text with emoji
-              style: TextStyle(fontSize: 24.0),
+              style: const TextStyle(fontSize: 24.0),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               'Hunger Level: $hungerLevel',
-              style: TextStyle(fontSize: 20.0),
+              style: const TextStyle(fontSize: 20.0),
             ),
-            SizedBox(height: 32.0),
+            const SizedBox(height: 32.0),
             ElevatedButton(
               onPressed: _playWithPet,
-              child: Text('Play with Your Pet'),
+              child: const Text('Play with Your Pet'),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: _feedPet,
-              child: Text('Feed Your Pet'),
+              child: const Text('Feed Your Pet'),
             ),
           ],
         ),
